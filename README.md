@@ -39,3 +39,17 @@ python train.py FinanData.mat --label-row 20
 4. Compare class-specific errors once labels are verified and document limitations.
 
 Research and education only; not for financial decisions.
+
+## Five-model research comparison
+
+Run `python compare_models.py FinanData.mat --label-row 20` to train five implementations on the same split. The label row, 0/1 meaning, feature order, extra record, and any leakage remain unverified. Results below are a single exploratory run on 29 test records, not evidence of real-world predictive performance.
+
+| Model | Test accuracy | Test ROC-AUC | Confusion matrix (actual rows, predicted columns 0/1) |
+| --- | ---: | ---: | --- |
+| MLP | 26/29 (89.7%) | 0.971 | [[14, 0], [3, 12]] |
+| Decision tree | 20/29 (69.0%) | 0.814 | [[9, 5], [4, 11]] |
+| RBF neural network | 25/29 (86.2%) | 0.943 | [[12, 2], [2, 13]] |
+| ANFIS-inspired prototype | 27/29 (93.1%) | 0.943 | [[14, 0], [2, 13]] |
+| GA + wavelet + hierarchical fuzzy prototype | 24/29 (82.8%) | 0.867 | [[13, 1], [4, 11]] |
+
+The combined prototype uses a four-level Haar wavelet packet transform over each ordered feature vector, genetic selection of eight coefficients based on internal training-set cross-validation of a logistic regression proxy, and a trainable 4 → 2 → 1 hierarchy of two-input Sugeno-style fuzzy nodes. This is a **thesis-inspired approximation**, not an exact implementation or replication: the original feature ordering, genetic fitness and other training details need confirmation. The wavelet transform treats the feature order as meaningful; this assumption requires validation. Fuzzy neural models select a stopping epoch using validation loss. The MLP and decision tree use fixed settings; no model was selected using test results. Repeatable seeds do not guarantee identical results across environments.
