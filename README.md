@@ -1,33 +1,41 @@
 # Financial Bankruptcy Prediction: Neuro-Fuzzy Research
 
-A work-in-progress project inspired by Mehran Beikahmadi's completed master's thesis in Artificial Intelligence. The research explored an evolutionary neuro-fuzzy approach to bankruptcy prediction using financial information from companies listed on the Tehran Stock Exchange.
+A work-in-progress modern experiment inspired by Mehran Beikahmadi's completed master's thesis in Artificial Intelligence. The thesis describes hierarchical ANFIS submodels, wavelet packet features, genetic feature selection and gradient descent for bankruptcy prediction using Tehran Stock Exchange financial data.
 
-## Research background
+## Implementation status
 
-The thesis describes a hierarchical fuzzy inference system using ANFIS submodels, wavelet packet feature extraction, binary genetic algorithm feature selection, and gradient descent. It reports comparisons against neural-network and decision-tree methods. These are historical thesis claims; this repository does not yet reproduce or independently verify them.
+This repository contains an **experimental PyTorch neuro-fuzzy classifier** with Gaussian rule firing and first-order Takagi–Sugeno consequents, plus a logistic regression baseline. It is a new simplified prototype, **not a reproduction of the thesis's hierarchical model**, wavelet processing or genetic algorithm. The original dataset is not included; its permission, provenance and schema must be verified before sharing.
 
-## Current status
+## Provisional experiment on original file
 
-**Early exploration.** This repository currently provides a small tool to inspect MATLAB `.mat` file structure. The original MATLAB data file is not included. The modern model, training pipeline, and evaluation are not yet implemented. The original project's matrix has dimensions 21 × 143; row and column meaning, target labels, data provenance, permissions, and preprocessing still need verification before modeling.
+The provided `FinanData.mat` contains a 21 × 143 matrix. The thesis describes 142 firms, 71 in each class. The last row contains 72 ones and 71 zeros, making it a plausible target row, but **its meaning and the extra record have not been confirmed**. The first 20 rows are treated as features for this exploratory run. The mapping of 0/1 to bankruptcy is unknown; no claims about bankrupt-firm detection can be made yet.
 
-## Inspect a MATLAB file
+Using seed 42 and one stratified 91/23/29 train/validation/test split, the run produced:
+
+| Model | Test accuracy | Test ROC-AUC | Confusion matrix (actual rows, predicted columns 0/1) |
+| --- | ---: | ---: | --- |
+| Logistic regression | 27/29 (93.1%) | 0.976 | [[14, 0], [2, 13]] |
+| Neuro-fuzzy prototype | 27/29 (93.1%) | 0.943 | [[14, 0], [2, 13]] |
+
+The result is **provisional**, based on only 29 test samples; feature meanings, class labels, record independence, potential target leakage, data collection timing and the extra record need verification. This split is not directly comparable to the original thesis. Model selection uses validation loss; scaling is fitted on the training split only. The score does not establish real-world performance.
+
+## Run locally
+
+Python 3.10+ recommended. Create and activate a virtual environment, then:
 
 ```bash
-python -m venv .venv
-# Activate the environment, then:
 pip install -r requirements.txt
-python inspect_mat.py path/to/data.mat
+python inspect_mat.py path/to/FinanData.mat
+python train.py path/to/FinanData.mat --label-row 20
 ```
 
-The script displays variable names, dimensions and data types, not the values. Keep private or licensed data outside the repository. It supports MATLAB files that SciPy can read; v7.3 files require a different reader.
+`--label-row 20` is zero-based and is a hypothesis, not a verified schema. The script assumes columns are samples and all remaining rows are features; don't rely on its result until those assumptions are confirmed. It supports MATLAB files readable by SciPy; v7.3 requires a different reader.
 
 ## Next steps
 
-1. Document the dataset, labels, provenance, permitted uses and original evaluation.
-2. Build a reproducible baseline with a leakage-aware train/test split.
-3. Explore a modern neuro-fuzzy implementation and feature selection.
-4. Compare methods using appropriate class-sensitive metrics, and document limitations.
+1. Confirm the data layout, target mapping, extra record, permitted uses and any identifiers or leakage.
+2. Re-evaluate with appropriate company- and time-aware splits and repeated validation.
+3. Implement and test the thesis's hierarchical fuzzy structure, wavelet features and genetic selection separately.
+4. Compare class-specific errors once labels are verified and document limitations.
 
-## Responsible use
-
-Research and education only. This project is not intended for financial decisions. Results from the original thesis cannot be assumed to generalize to current markets.
+Research and education only; not for financial decisions.
