@@ -53,3 +53,28 @@ Run `python compare_models.py FinanData.mat --label-row 20` to train five implem
 | GA + wavelet + hierarchical fuzzy prototype | 24/29 (82.8%) | 0.867 | [[13, 1], [4, 11]] |
 
 The combined prototype uses a four-level Haar wavelet packet transform over each ordered feature vector, genetic selection of eight coefficients based on internal training-set cross-validation of a logistic regression proxy, and a trainable 4 → 2 → 1 hierarchy of two-input Sugeno-style fuzzy nodes. This is a **thesis-inspired approximation**, not an exact implementation or replication: the original feature ordering, genetic fitness and other training details need confirmation. The wavelet transform treats the feature order as meaningful; this assumption requires validation. Fuzzy neural models select a stopping epoch using validation loss. The MLP and decision tree use fixed settings; no model was selected using test results. Repeatable seeds do not guarantee identical results across environments.
+
+## Real-world data: Taiwanese bankruptcy prediction
+
+This optional experiment uses the UCI Taiwanese Bankruptcy Prediction dataset, collected from the Taiwan Economic Journal for 1999–2009. It has 6,819 records, 95 features, and 220 bankrupt records. In this dataset the label is 1 for bankrupt and 0 for non-bankrupt; **do not transfer that mapping to the thesis data**. Source: Taiwanese Bankruptcy Prediction (2020), UCI Machine Learning Repository, https://doi.org/10.24432/C5004D. License: CC BY 4.0, https://creativecommons.org/licenses/by/4.0/; attribution is required. The file is downloaded separately from UCI rather than committed to this repository.
+
+```bash
+pip install -r requirements.txt
+python download_taiwan.py
+python taiwan_experiment.py taiwan_bankruptcy.csv
+```
+
+The experiment uses eight predefined financial indicators, a stratified random 64/16/20 train/validation/test split and a fixed 0.5 threshold. Inputs are standardized using training data only. Neural models use positive-class weighting and validation loss for early stopping; the decision tree uses class weights. The hierarchical prototype uses eight raw financial features; it does **not** use the thesis's wavelet or genetic selection in this experiment. For the latter components see `compare_models.py`.
+
+One run (seed 42, 1,364 test records including 44 bankrupt) produced:
+
+| Model | Accuracy | Bankruptcy precision | Bankruptcy recall | Average precision (PR-AUC) |
+| --- | ---: | ---: | ---: | ---: |
+| Always predict not bankrupt | 96.8% | 0.0% | 0.0% | 0.032 |
+| Decision tree | 87.1% | 17.3% | 79.5% | 0.215 |
+| MLP | 86.7% | 17.2% | 81.8% | 0.388 |
+| RBF network | 96.8% | 0.0% | 0.0% | 0.168 |
+| ANFIS-inspired | 87.5% | 17.9% | 79.5% | 0.337 |
+| Hierarchical fuzzy prototype | 89.8% | 20.9% | 77.3% | 0.343 |
+
+Class imbalance makes accuracy misleading. For example, the MLP found 36 of 44 bankrupt cases but flagged 173 non-bankrupt records as bankrupt. The RBF model selected epoch 1 and predicted no bankrupt cases at the fixed threshold; its training and threshold need further work. Metrics vary with versions and the split. A random split can overstate real-world performance if observations from the same firm or neighboring years appear across splits, and the dataset does not establish present-day performance. Review feature timing and potential leakage, and use company/time-aware validation when appropriate metadata is available. This is not a complete reproduction of the thesis or a production financial tool.

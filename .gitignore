@@ -2,3 +2,5 @@
 __pycache__/
 *.pyc
 *.mat
+taiwan_bankruptcy.csv
+*.csv.part
