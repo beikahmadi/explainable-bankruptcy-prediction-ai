@@ -4,7 +4,7 @@ A work-in-progress modern experiment inspired by Mehran Beikahmadi's completed m
 
 ## Implementation status
 
-This repository contains an **experimental PyTorch neuro-fuzzy classifier** with Gaussian rule firing and first-order Takagi–Sugeno consequents, plus a logistic regression baseline. It is a new simplified prototype, **not a reproduction of the thesis's hierarchical model**, wavelet processing or genetic algorithm. The original MATLAB data file is included with the project author’s permission. Its schema and provenance still need verification.
+This repository contains an **experimental PyTorch neuro-fuzzy classifier** with Gaussian rule firing and first-order Takagi–Sugeno consequents, plus a logistic regression baseline. The single neuro-fuzzy classifier is a simplified prototype. A separate five-model comparison includes a thesis-inspired hierarchical fuzzy, wavelet and genetic algorithm prototype; neither is an exact reproduction of the original thesis. The original MATLAB data file is included with the project author’s permission. Its schema and provenance still need verification.
 
 ## Provisional experiment on original file
 
