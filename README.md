@@ -4,11 +4,11 @@ A work-in-progress modern experiment inspired by Mehran Beikahmadi's completed m
 
 ## Implementation status
 
-This repository contains an **experimental PyTorch neuro-fuzzy classifier** with Gaussian rule firing and first-order Takagi–Sugeno consequents, plus a logistic regression baseline. It is a new simplified prototype, **not a reproduction of the thesis's hierarchical model**, wavelet processing or genetic algorithm. The original dataset is not included; its permission, provenance and schema must be verified before sharing.
+This repository contains an **experimental PyTorch neuro-fuzzy classifier** with Gaussian rule firing and first-order Takagi–Sugeno consequents, plus a logistic regression baseline. It is a new simplified prototype, **not a reproduction of the thesis's hierarchical model**, wavelet processing or genetic algorithm. The original MATLAB data file is included with the project author’s permission. Its schema and provenance still need verification.
 
 ## Provisional experiment on original file
 
-The provided `FinanData.mat` contains a 21 × 143 matrix. The thesis describes 142 firms, 71 in each class. The last row contains 72 ones and 71 zeros, making it a plausible target row, but **its meaning and the extra record have not been confirmed**. The first 20 rows are treated as features for this exploratory run. The mapping of 0/1 to bankruptcy is unknown; no claims about bankrupt-firm detection can be made yet.
+The provided `FinanData.mat` contains a 21 × 143 matrix. The thesis describes 142 firms, 71 in each class. The last row contains 72 ones and 71 zeros, making it a plausible target row, but **its meaning and the extra record have not been confirmed**. The first 20 rows are treated as features for this exploratory run. The project author suggests that 0 may indicate bankruptcy; this class mapping is provisional and needs verification. No claims about bankrupt-firm detection can be made yet.
 
 Using seed 42 and one stratified 91/23/29 train/validation/test split, the run produced:
 
@@ -25,8 +25,8 @@ Python 3.10+ recommended. Create and activate a virtual environment, then:
 
 ```bash
 pip install -r requirements.txt
-python inspect_mat.py path/to/FinanData.mat
-python train.py path/to/FinanData.mat --label-row 20
+python inspect_mat.py FinanData.mat
+python train.py FinanData.mat --label-row 20
 ```
 
 `--label-row 20` is zero-based and is a hypothesis, not a verified schema. The script assumes columns are samples and all remaining rows are features; don't rely on its result until those assumptions are confirmed. It supports MATLAB files readable by SciPy; v7.3 requires a different reader.
